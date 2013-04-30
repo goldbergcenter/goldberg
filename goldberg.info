@@ -1,0 +1,8 @@
+; $Id$
+name = Goldberg
+description = A module featuring functionality for the Goldberg Center
+core = 7.x
+package = Custom History Modules
+version = 7.x-0.0.1
+
+files[] = includes/goldberg.front.inc

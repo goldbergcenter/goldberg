@@ -1,0 +1,18 @@
+<?php
+/**
+ * Install the Goldberg module
+ *
+ * @file
+ */
+
+/**
+ * Implements hook_install().
+ */
+function goldberg_install() {
+} // function goldberg_install()
+
+/**
+ * Implements hook_uninstall().
+ */
+function goldberg_uninstall() {
+} // function goldberg_uninstall()

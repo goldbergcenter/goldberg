@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * A module that displays RSS feeds of podcasts, articles, and reviews.
+ */
+
+/**
+ * Enable front page builder function calls from only the front page
+ */
+if ($is_front) {
+  include_once('includes/goldberg.front.inc');
+}
+
+/**
+ *
+ * Implements hook_help().
+ *
+ * Module help page
+ */
+function goldberg_help($path, $arg) {
+
+  // Declare output variable
+  $output = '';
+
+  // provide help for the module
+  switch ($path) {
+    case "admin/help#goldberg":
+      $output = t('
+        <p>A module that displays a Isotope jQuery plugin based front page. Administration for panel order is also provided</p>
+        <ul>
+          <li></li>
+        </ul>
+      ');
+      break;
+  }
+
+  // Return the output
+  return $output;
+} // function goldberg_help($path, $arg)
+
+/**
+ *
+ * Implements hook_menu().
+ *
+ * Menu items for module
+ */
+function goldberg_menu() {
+
+  // Declare the menu items variable
+  $items = array();
+
+  // Define the administration page for the goldberg module
+  $items['admin/config/goldberg'] = array(
+    'title' => 'Patterns',
+    'description' => 'Administer the Goldberg module.',
+    'file' => 'include/goldberg.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('goldberg_frontpage_form'),
+    'access arguments' => array('administer goldberg'),
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  // Define the default page panel order json location
+  $items['json/frontpage.json'] = array(
+    'title' => 'Default Front Page Panel Order',
+    'description' => 'Display the json for our panel order.',
+    'file' => 'include/goldberg.frontjson.inc',
+    'page callback' => 'goldberg_frontjson',
+    'access arguments' => array('access content'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  // Return the menu items
+  return $items;
+} // function goldberg_menu()
