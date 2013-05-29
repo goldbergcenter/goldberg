@@ -36,7 +36,7 @@ function goldberg_frontpage_select_form($form, &$form_state) {
     '+1 year' => 'One year',
     '+5 years' => 'Five years'
   );
-  
+
   // Display our cache duration dropdown
   $form['goldberg_admin']['cache_duration'] = array(
     '#title' => 'Cache Duration',
@@ -44,19 +44,19 @@ function goldberg_frontpage_select_form($form, &$form_state) {
     '#options' => $duration_options,
     '#default_value' => variable_get('goldberg_cache_duration', '+1 hour'),
   );
-  
+
   // Create our debug status options
   $debug_options = array(
-    true => 'On',
-    false => 'Off'
+    TRUE => 'On',
+    FALSE => 'Off'
   );
-  
+
   // Display our debug status dropdown
   $form['goldberg_admin']['goldberg_debug'] = array(
     '#title' => 'Debug Mode',
     '#type' => 'select',
     '#options' => $debug_options,
-    '#default_value' => variable_get('goldberg_debug', false),
+    '#default_value' => variable_get('goldberg_debug', FALSE),
   );
 
   // Define the submit callback
@@ -76,7 +76,7 @@ function goldberg_frontpage_select_form_submit($form, &$form_state) {
 
   // Set the cache duration to our submitted value
   variable_set('goldberg_cache_duration', $form_state['values']['goldberg_admin']['cache_duration']);
-  
+
   // Set the debug status to our submitted value
   variable_set('goldberg_debug', $form_state['values']['goldberg_admin']['goldberg_debug']);
 
@@ -89,14 +89,14 @@ function goldberg_frontpage_select_form_submit($form, &$form_state) {
  * @see system_settings_form()
  */
 function goldberg_frontpage_form($form, &$form_state) {
-  
+
   // Load all panel data from the database
   include_once('goldberg.paneldata.inc');
   $paneldata = goldberg_panel_fetchdata();
-  
+
   // Update the panel data and prep it for our form
   $panel_list = goldberg_panel_build_form_data($paneldata);
-  
+
   // Create a parent element and use our custom theme
   $form['panel_form']['panels'] = array(
     '#prefix' => '<div id="panel-form">',
@@ -104,14 +104,14 @@ function goldberg_frontpage_form($form, &$form_state) {
     '#tree' => TRUE,
     '#theme' => 'goldberg_theme_name'
   );
-  
+
   // Create our debug status options
   $goldberg_panel_size_options = array(
     0 => 'Manual',
     1 => 'Default',
     99 => 'Random'
   );
-  
+
   // Display our debug status dropdown
   $form['panel_form']['panel_size'] = array(
     '#title' => 'Panel Sizes',
@@ -121,32 +121,32 @@ function goldberg_frontpage_form($form, &$form_state) {
     '#weight' => 0,
     '#default_value' => variable_get('goldberg_panel_size_preset', 0),
   );
-  
+
   // Create our image size options
   $type_options = array('large' => 'Large (238x238)', 'small' => 'Small (118x118)', 'tall' => 'Tall (238x118)', 'long' => 'Long (118x238)');
-  
+
   // Create the form elements for each panel
   foreach ($panel_list as $key => $panel) {
-  
+
     // Display the panel name with a link to edit the primary node
     $form['panel_form']['panels'][$key]['label'] = array(
       '#type' => 'item',
-      '#title' => '<a href="/node/' . $panel['key'] . '/edit">' . $panel['name'] . '</a>',
+      '#title' => check_plain('<a href="/node/' . $panel['key'] . '/edit">' . $panel['name'] . '</a>'),
     );
-  
+
     // Define the node ID of the panel
     $form['panel_form']['panels'][$key]['key'] = array(
       '#value' => $panel['key'],
       '#type' => 'hidden',
     );
-  
+
     // Define the size of the panel
     $form['panel_form']['panels'][$key]['type'] = array(
       '#type' => 'select',
       '#options' => $type_options,
       '#default_value' => $panel['type'],
     );
-  
+
     // Define the order of the panels (needed for table drag)
     $form['panel_form']['panels'][$key]['weight'] = array(
       '#type' => 'textfield',
@@ -155,10 +155,10 @@ function goldberg_frontpage_form($form, &$form_state) {
       '#attributes' => array('class' => array('rank-weight')),
     );
   }
-  
+
   // Define the submit callback
   $form['#submit'][] = 'goldberg_frontpage_form_submit';
-  
+
   // Return the form
   return system_settings_form($form);
 }
@@ -188,53 +188,54 @@ function goldberg_frontpage_form_submit($form, &$form_state) {
   weight = :weight
   WHERE nid = :key
   ";
-  
+
   if (variable_get('goldberg_panel_size_preset', 0) != 0) {
     // Get our array of panel sizes
     $panels = goldberg_fetch_preset(variable_get('goldberg_panel_size_preset', 0), $num_panels);
-    
+
     // Make sure that our return value is the correct size
     if ($num_panels != count($panels)) {
       // Something went horribly wrong, go back to manual
       variable_set('goldberg_panel_size_preset', 0);
       drupal_set_message(t('There was a problem using that preset. Please try again or use the manual preset.'), 'warning');
-    } else {
- 
+    }
+    else {
+
       // Loop over our array of panels
-      for($i=0; $i < $num_panels; $i++) {
+      for ($i=0; $i < $num_panels; $i++) {
         // Get values from our form data for the current record
         $current_key = $form_state['values']['panels'][$i]['key'];
         $current_weight = $form_state['values']['panels'][$i]['weight'];
-        
+
         // Get the type from our panels array and not the form
         $current_type = $panels[$i]['type'];
-    
+
         // Update the current record
         $update_query_result = db_query($update_query, array(':key' => $current_key, ':type' => $current_type, ':weight' => $current_weight));
       }
       drupal_set_message(t('Preset changes successfully submitted.'), 'status');
-    
+
     }
   }
-  
+
   // Are we using manual ordering
   if (variable_get('goldberg_panel_size_preset', 0) == 0) {
 
     // Loop over our form data
-    for($i=0; $i < $num_panels; $i++) {
-  
+    for ($i=0; $i < $num_panels; $i++) {
+
       // Get values from our form data for the current record
       $current_key = $form_state['values']['panels'][$i]['key'];
       $current_type = $form_state['values']['panels'][$i]['type'];
       $current_weight = $form_state['values']['panels'][$i]['weight'];
-  
+
       // Update the current record
       $update_query_result = db_query($update_query, array(':key' => $current_key, ':type' => $current_type, ':weight' => $current_weight));
     }
     drupal_set_message(t('Manual changes successfully submitted.'), 'status');
-    
+
   }
-  
+
 }
 
 /**
@@ -262,7 +263,7 @@ function goldberg_panel_build_form_data($paneldata) {
   }
 
   // Loop over the node IDs passed in via $paneldata
-  for($p = 0; $p < count($paneldata); $p++) {
+  for ($p = 0; $p < count($paneldata); $p++) {
 
     // Set up our core variables
     $current_nid = $paneldata[$p]['nid'];
@@ -352,7 +353,7 @@ function goldberg_fetch_preset($preset_id = 1, $num_panels) {
   $temp_preset = array();
 
   // Choose a preset
-  switch($preset_id) {
+  switch ($preset_id) {
     case 1:
       // The default pattern
       $temp_preset[] = 'large';
@@ -424,10 +425,10 @@ function goldberg_fetch_preset($preset_id = 1, $num_panels) {
     // Add the type from our preset to the array
     $preset[$i]['type'] = $temp_preset[$i];
   }
-  
+
   // Initialize our return array
   $panels = array();
-  
+
   // Get the size of the preset
   $preset_size = count($preset);
   // Assign our panel size

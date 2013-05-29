@@ -12,7 +12,7 @@ function goldberg_install() {
 
   // Create variables here.
   variable_set('goldberg_cache_duration', '+1 hour');
-  variable_set('goldberg_debug', false);
+  variable_set('goldberg_debug', FALSE);
   variable_set('goldberg_panel_size_preset', 0);
 
 } // function goldberg_install()

@@ -36,14 +36,14 @@ function goldberg_panel_populate($paneldata) {
   $output = '';
 
   // Loop over our panels
-  for($p = 0; $p < count($paneldata); $p++) {
+  for ($p = 0; $p < count($paneldata); $p++) {
 
     // Initialize an array to hold our type short names
     $typearray = array();
     // Initialize a variable to hold our list of item types
     $typelist = '';
     // Loop over the types
-    for($t = 0; $t < count($paneldata[$p]['types']); $t++) {
+    for ($t = 0; $t < count($paneldata[$p]['types']); $t++) {
       // Store the short names in our array
       $typearray[] = $paneldata[$p]['types'][$t]['type_short_name'];
       // Add types to our list
@@ -66,7 +66,7 @@ function goldberg_panel_populate($paneldata) {
     $output .= '<p class="title">' . $paneldata[$p]['page_title'] . '</p>';
 
     // Loop over the images
-    for($i = 0; $i < count($paneldata[$p]['images']); $i++) {
+    for ($i = 0; $i < count($paneldata[$p]['images']); $i++) {
 
       // Generate and style our image
       $small_panel = array(

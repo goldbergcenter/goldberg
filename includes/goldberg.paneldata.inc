@@ -68,14 +68,15 @@ function goldberg_panel_fetchdata() {
   $taxonomy_types = goldberg_fetch_types();
 
   // Get the panels
-  if (variable_get('goldberg_debug', false) === false) {
+  if (variable_get('goldberg_debug', FALSE) === FALSE) {
     // Setup a cache ID
     $cid = 'GOLDBERG:panel_query_result';
     // Check for a cached version of the query
     if ($cached = cache_get($cid)) {
       // If a cached entry exists, return it
       $panel_query_result = $cached->data;
-    } else {
+    }
+    else {
       // Run the query
       $panel_query_result = db_query($panel_query)->fetchAll();
       // Cache the query
@@ -100,14 +101,15 @@ function goldberg_panel_fetchdata() {
     $typesarray = array();
 
     // Get the types for this panel
-    if (variable_get('goldberg_debug', false) === false) {
+    if (variable_get('goldberg_debug', FALSE) === FALSE) {
       // Setup a cache ID
       $cid = 'GOLDBERG:panel_type_result:' . $panel_item->nid;
       // Check for a cached version of the query
       if ($cached = cache_get($cid)) {
         // If a cached entry exists, return it
         $panel_type_result = $cached->data;
-      } else {
+      }
+      else {
         // Run the query
         $panel_type_result = db_query($type_query, array(':nid' => $panel_item->nid))->fetchAll();
         // Cache the query
@@ -145,14 +147,15 @@ function goldberg_panel_fetchdata() {
     $imagesarray = array();
 
     // Get the images for this panel
-    if (variable_get('goldberg_debug', false) === false) {
+    if (variable_get('goldberg_debug', FALSE) === FALSE) {
       // Setup a cache ID
       $cid = 'GOLDBERG:panel_image_result:' . $panel_item->nid;
       // Check for a cached version of the query
       if ($cached = cache_get($cid)) {
         // If a cached entry exists, return it
         $panel_image_result = $cached->data;
-      } else {
+      }
+      else {
         // Run the query
         $panel_image_result = db_query($panel_image_query, array(':nid' => $panel_item->nid))->fetchAll();
         // Cache the query
@@ -221,14 +224,15 @@ function goldberg_fetch_types() {
     ORDER BY {taxonomy_term_data}.weight ASC
   ';
 
-  if (variable_get('goldberg_debug', false) === false) {
+  if (variable_get('goldberg_debug', FALSE) === FALSE) {
     // Setup a cache ID
     $cid = 'GOLDBERG:term_query_result';
     // Check for a cached version of the query
     if ($cached = cache_get($cid)) {
       // If a cached entry exists, return it
       $term_query_result = $cached->data;
-    } else {
+    }
+    else {
       // Run the query
       $term_query_result = db_query($term_query, array(':type' => 'Type'))->fetchAll();
       // Cache the query
@@ -272,7 +276,7 @@ function goldberg_fetch_types() {
     }
     else {
       // Assign the color for the first three elements (black, red, grey)
-      switch($counter) {
+      switch ($counter) {
         case 0:
           // Black
           $color = "0, 0, 0";

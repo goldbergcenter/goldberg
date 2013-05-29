@@ -52,6 +52,3 @@ function goldberg_frontjson() {
   print '}';
 
 }
-
-?>
-
