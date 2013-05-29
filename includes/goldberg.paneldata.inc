@@ -171,8 +171,8 @@ function goldberg_panel_fetchdata() {
       // Populate the large image array
       $imagesarray[$image_counter]['large_image']['alt'] = $panel_images->large_alt;
       $imagesarray[$image_counter]['large_image']['width'] = $panel_images->large_width;
-      $imagesarray[$image_counter]['large_image']['height'] = $panel_images->long_height;
-      $imagesarray[$image_counter]['large_image']['uri'] = $panel_images->long_uri;
+      $imagesarray[$image_counter]['large_image']['height'] = $panel_images->large_height;
+      $imagesarray[$image_counter]['large_image']['uri'] = $panel_images->large_uri;
 
       // Populate the long image array
       $imagesarray[$image_counter]['long_image']['alt'] = $panel_images->long_alt;
