@@ -67,7 +67,7 @@ function goldberg_menu() {
   // Define the administration page for the goldberg module
   $items['admin/config/system/goldberg/main'] = array(
     'title' => 'Goldberg Main',
-    'description' => 'Select the front panel administration method.',
+    'description' => 'Configure general settings for the Goldberg Module.',
     'file' => 'includes/goldberg.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('goldberg_frontpage_select_form'),
@@ -78,26 +78,14 @@ function goldberg_menu() {
 
   // Define the administration page for the goldberg module
   $items['admin/config/system/goldberg/manual'] = array(
-    'title' => 'Manual Management',
-    'description' => 'Administer the Goldberg module.',
+    'title' => 'Panel Management',
+    'description' => 'Configure the panel arrangement for the Goldberg Module.',
     'file' => 'includes/goldberg.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('goldberg_frontpage_form'),
     'access arguments' => array('administer goldberg'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 2,
-  );
-
-  // Define the administration page for the goldberg module
-  $items['admin/config/system/goldberg/auto'] = array(
-    'title' => 'Automatic Management',
-    'description' => 'Administer the Goldberg module.',
-    'file' => 'includes/goldberg.admin.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('goldberg_frontpage_auto_form'),
-    'access arguments' => array('administer goldberg'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 3,
   );
 
   // Return the menu items
@@ -122,9 +110,6 @@ function theme_goldberg_theme_name($vars) {
   $header = array(
     'label' => t('Name'),
     'type' => t('Type'),
-    'promote' => t('promote'),
-    'demote' => t('demote'),
-    'points' => t('points'),
     'weight' => t('Rank'),
   );
 

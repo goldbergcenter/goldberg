@@ -11,9 +11,9 @@
 function goldberg_install() {
 
   // Create variables here.
-  variable_set('goldberg_select_management', 'manual');
   variable_set('goldberg_cache_duration', '+1 hour');
   variable_set('goldberg_debug', false);
+  variable_set('goldberg_panel_size_preset', 0);
 
 } // function goldberg_install()
 
@@ -23,9 +23,9 @@ function goldberg_install() {
 function goldberg_uninstall() {
 
   // Remove variables here
-  variable_del('goldberg_select_management');
   variable_del('goldberg_cache_duration');
   variable_del('goldberg_debug');
+  variable_del('goldberg_panel_size_preset');
 
 } // function goldberg_uninstall()
 
