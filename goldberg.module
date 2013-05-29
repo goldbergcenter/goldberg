@@ -5,13 +5,6 @@
  */
 
 /**
- * Enable front page builder function calls from only the front page
- */
-if ($is_front) {
-  include_once('includes/goldberg.front.inc');
-}
-
-/**
  *
  * Implements hook_help().
  *
@@ -49,27 +42,186 @@ function goldberg_menu() {
   // Declare the menu items variable
   $items = array();
 
-  // Define the administration page for the goldberg module
-  $items['admin/config/goldberg'] = array(
-    'title' => 'Patterns',
-    'description' => 'Administer the Goldberg module.',
-    'file' => 'include/goldberg.admin.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('goldberg_frontpage_form'),
-    'access arguments' => array('administer goldberg'),
-    'type' => MENU_LOCAL_TASK,
-  );
-
   // Define the default page panel order json location
   $items['json/frontpage.json'] = array(
     'title' => 'Default Front Page Panel Order',
     'description' => 'Display the json for our panel order.',
-    'file' => 'include/goldberg.frontjson.inc',
+    'file' => 'includes/goldberg.frontjson.inc',
     'page callback' => 'goldberg_frontjson',
     'access arguments' => array('access content'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
 
+  // Define the administration page for the goldberg module
+  $items['admin/config/system/goldberg'] = array(
+    'title' => 'Goldberg',
+    'description' => 'Administer the Goldberg module.',
+    'file' => 'includes/goldberg.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('goldberg_frontpage_select_form'),
+    'access arguments' => array('administer goldberg'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 1,
+  );
+
+  // Define the administration page for the goldberg module
+  $items['admin/config/system/goldberg/main'] = array(
+    'title' => 'Goldberg Main',
+    'description' => 'Select the front panel administration method.',
+    'file' => 'includes/goldberg.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('goldberg_frontpage_select_form'),
+    'access arguments' => array('administer goldberg'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 1,
+  );
+
+  // Define the administration page for the goldberg module
+  $items['admin/config/system/goldberg/manual'] = array(
+    'title' => 'Manual Management',
+    'description' => 'Administer the Goldberg module.',
+    'file' => 'includes/goldberg.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('goldberg_frontpage_form'),
+    'access arguments' => array('administer goldberg'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
+  );
+
+  // Define the administration page for the goldberg module
+  $items['admin/config/system/goldberg/auto'] = array(
+    'title' => 'Automatic Management',
+    'description' => 'Administer the Goldberg module.',
+    'file' => 'includes/goldberg.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('goldberg_frontpage_auto_form'),
+    'access arguments' => array('administer goldberg'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3,
+  );
+
   // Return the menu items
   return $items;
 } // function goldberg_menu()
+
+/**
+ * Implements hook_theme().
+ */
+function goldberg_theme($existing, $type, $theme, $path) {
+  return array(
+    'goldberg_theme_name' => array(
+      'render element' => 'element'
+    ),
+  );
+}
+
+function theme_goldberg_theme_name($vars) {
+  $element = $vars['element'];
+  drupal_add_tabledrag('form_id', 'order', 'sibling', 'rank-weight'); // needed for table dragging
+
+  $header = array(
+    'label' => t('Name'),
+    'type' => t('Type'),
+    'promote' => t('promote'),
+    'demote' => t('demote'),
+    'points' => t('points'),
+    'weight' => t('Rank'),
+  );
+
+  $rows = array();
+  foreach (element_children($element) as $key) {
+    $row = array();
+
+    $row['data'] = array();
+    foreach ($header as $fieldname => $title) {
+      $row['data'][] = drupal_render($element[$key][$fieldname]);
+      $row['class'] = array('draggable'); // needed for table dragging
+    }
+    $rows[] = $row;
+  }
+
+  return theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'form_id'), // needed for table dragging
+  ));
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function goldberg_block_info() {
+
+  // Define the block
+  $blocks['goldberg_panel_menu_block'] = array(
+    'info' => t('Goldberg Panel Menu'), //The name that will appear in the block list.
+    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+  );
+
+  // Define the block
+  $blocks['goldberg_panel_navigation_block'] = array(
+    'info' => t('Goldberg Panel Navigation'), //The name that will appear in the block list.
+    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+  );
+
+  // Define the block
+  $blocks['goldberg_front_page_block'] = array(
+    'info' => t('Goldberg Front Panels'), //The name that will appear in the block list.
+    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+  );
+
+  // Return the block
+  return $blocks;
+} // function goldberg_block_info()
+
+/**
+ * Implements hook_block_view().
+ *
+ * Prepares the contents of the block.
+ */
+function goldberg_block_view($delta = '') {
+
+  // switch for the block to display
+  switch ($delta) {
+    // Is this the panel menu block
+    case 'goldberg_panel_menu_block':
+      // Define the block subject
+      $block['subject'] = t('Goldberg panel menu block');
+
+      // Check for user access
+      if (user_access('access content')) {
+        // Populate the block content with our menu content
+        include_once('includes/goldberg.paneldata.inc');
+        include_once('includes/goldberg.menu.inc');
+        $block['content'] = goldberg_menu_populate();
+      }
+      break;
+    case 'goldberg_panel_navigation_block':
+      // Define the block subject
+      $block['subject'] = t('Goldberg panel navigation block');
+
+      // Check for user access
+      if (user_access('access content')) {
+        // Populate the block content
+        include_once('includes/goldberg.paneldata.inc');
+        include_once('includes/goldberg.panelnav.inc');
+        $block['content'] = goldberg_panelnav_populate();
+      }
+      break;
+    case 'goldberg_front_page_block':
+      // Define the block subject
+      $block['subject'] = t('Goldberg front page block');
+
+      // Check for user access
+      if (user_access('access content')) {
+        // Populate the block content
+        include_once('includes/goldberg.paneldata.inc');
+        include_once('includes/goldberg.front.inc');
+        $block['content'] = goldberg_panel_display();
+      }
+      break;
+  }
+
+  // Return the block
+  return $block;
+} // function goldberg_block_view()

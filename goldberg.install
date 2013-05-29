@@ -9,10 +9,71 @@
  * Implements hook_install().
  */
 function goldberg_install() {
+
+  // Create variables here.
+  variable_set('goldberg_select_management', 'manual');
+  variable_set('goldberg_cache_duration', '+1 hour');
+  variable_set('goldberg_debug', false);
+
 } // function goldberg_install()
 
 /**
  * Implements hook_uninstall().
  */
 function goldberg_uninstall() {
+
+  // Remove variables here
+  variable_del('goldberg_select_management');
+  variable_del('goldberg_cache_duration');
+  variable_del('goldberg_debug');
+
 } // function goldberg_uninstall()
+
+/**
+ * Implements hook_schema().
+ */
+function goldberg_schema() {
+
+  $schema['goldberg_panels'] = array(
+    'description' => 'The base table for front page panel order.',
+    'fields' => array(
+      'id' => array(
+        'description' => t('Auto-incrementing primary key.'),
+        'type' => 'serial',
+      ),
+      'nid' => array(
+        'description' => 'The node id of the panel we are sorting.',
+        'type' => 'int',
+        'not null' => TRUE
+      ),
+      'type' => array(
+        'description' => 'The size or type of the panel.',
+        'type' => 'text',
+        'not null' => TRUE
+      ),
+      'weight' => array(
+        'description' => t('Sort order of the panel.'),
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'points' => array(
+        'description' => 'Raw score of ranking points associated with this panel.',
+        'type' => 'int',
+        'not null' => FALSE
+      ),
+      'pointsadjust' => array(
+        'description' => 'Ranking points added to this panel.',
+        'type' => 'int',
+        'not null' => FALSE
+      ),
+      'promote' => array(
+        'description' => 'Flag to indicate if the panel is promoted to the top or not. 0 is false, 1 is true',
+        'type' => 'int',
+        'not null' => FALSE
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+} // function goldberg_schema()

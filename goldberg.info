@@ -5,4 +5,8 @@ core = 7.x
 package = Custom History Modules
 version = 7.x-0.0.1
 
+dependencies[] = statistics
+
+files[] = includes/goldberg.admin.inc
 files[] = includes/goldberg.front.inc
+files[] = includes/goldberg.frontjson.inc
