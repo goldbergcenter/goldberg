@@ -9,7 +9,7 @@
 /**
  * Fetch and display json to be passed via AJAX to the front page
  */
-function goldberg_frontjson() {
+function goldberg_frontjson($reset = FALSE) {
 
   // Set our header
   header('Content-type: application/json');
@@ -29,25 +29,32 @@ function goldberg_frontjson() {
    
   // Check to see if we are in debug mode or not
   if (variable_get('goldberg_debug', FALSE) === FALSE) {
-    // Setup cache IDs
-    $query_cid = 'GOLDBERG:all_panels_query_result';
-    $output_cid = 'GOLDBERG:goldberg_front_json_output';
-    // Check for a cached version of the json
-    if ($output_cached = cache_get($output_cid)) {
-      // If a cached json output entry exists, return it
-      // NOTE: If a cached version of the json exists, we don't need to load the cached query
-      $json_output = $output_cached->data;
-    }
-    else {
-      // Run the query
-      $all_panels_query_result = db_query($all_panels_query)->fetchAll();
-      // Build the json
-      $json_output = goldberg_build_json($all_panels_query_result);
-      // Cache the query
-      cache_set($query_cid, $all_panels_query_result, 'cache', strtotime(variable_get('goldberg_cache_duration', '+1 hour')));
-      // Cache the json
-      cache_set($output_cid, $json_output, 'cache', strtotime(variable_get('goldberg_cache_duration', '+1 hour')));
-    }    
+    
+    // Declare a static variable to act as our cache
+    static $json_output;
+    
+    // If our static variable is not defined, check the database cache
+    if (!isset($json_output) || $reset) {    
+      // Setup cache IDs
+      $query_cid = 'GOLDBERG:all_panels_query_result';
+      $output_cid = 'GOLDBERG:goldberg_front_json_output';
+      // Check for a cached version of the json
+      if ($output_cached = cache_get($output_cid)) {
+        // If a cached json output entry exists, return it
+        // NOTE: If a cached version of the json exists, we don't need to load the cached query
+        $json_output = $output_cached->data;
+      }
+      else {
+        // Run the query
+        $all_panels_query_result = db_query($all_panels_query)->fetchAll();
+        // Build the json
+        $json_output = goldberg_build_json($all_panels_query_result);
+        // Cache the query
+        cache_set($query_cid, $all_panels_query_result, 'cache', strtotime(variable_get('goldberg_cache_duration', '+1 hour')));
+        // Cache the json
+        cache_set($output_cid, $json_output, 'cache', strtotime(variable_get('goldberg_cache_duration', '+1 hour')));
+      }    
+    } 
   }
   else {
     // Run the query
