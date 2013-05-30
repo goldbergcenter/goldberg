@@ -131,7 +131,7 @@ function goldberg_frontpage_form($form, &$form_state) {
     // Display the panel name with a link to edit the primary node
     $form['panel_form']['panels'][$key]['label'] = array(
       '#type' => 'item',
-      '#title' => check_plain('<a href="/node/' . $panel['key'] . '/edit">' . $panel['name'] . '</a>'),
+      '#title' => filter_xss('<a href="/node/' . $panel['key'] . '/edit">' . $panel['name'] . '</a>'),
     );
 
     // Define the node ID of the panel
