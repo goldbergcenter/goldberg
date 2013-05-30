@@ -243,16 +243,12 @@ function goldberg_fetch_types() {
     $term_query_result = db_query($term_query, array(':type' => 'Type'))->fetchAll();
   }
 
-
-  // Run the query
-  $term_query_result = db_query($term_query, array(':type' => 'Type'));
-
   // Initialize the return array
   $types = array();
   // Initialize a counter
   $counter = 0;
   // Get the number of types outside of the first three
-  $extra_types = $term_query_result->rowCount() - 3;
+  $extra_types = count($term_query_result) - 3;
   // Set the starting RGB value (white)
   $current = 255;
 
